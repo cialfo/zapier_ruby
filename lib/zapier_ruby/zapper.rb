@@ -1,11 +1,12 @@
 module ZapierRuby
   class Zapper
-    attr_accessor :zap_name, :logger
+    attr_accessor :zap_name, :logger, :opt_hash
 
-    def initialize(zap_name, web_hook_id=nil)
+    def initialize(zap_name, web_hook_id=nil, opt_hash={})
       self.zap_name = zap_name
       self.logger = LoggerDecorator.new(config.enable_logging)
       @zap_web_hook = web_hook_id if web_hook_id
+      self.opt_hash = init_opt_hash(opt_hash)
     end
 
     def zap(params={})
@@ -18,6 +19,11 @@ module ZapierRuby
     end
 
     private
+
+    def init_opt_hash(opt_hash)
+      opt_hash[:hook_path] ||= 'catch'
+      opt_hash
+    end
 
     def post_zap(params)
       rest_client.post(params, zap_headers)
@@ -41,8 +47,12 @@ module ZapierRuby
       }
     end
 
+    def hook_path
+      "#{opt_hash[:hook_path]}"
+    end
+
     def zap_url
-      "#{config.base_uri}#{zap_web_hook_id}/"
+      "#{config.base_uri}#{hook_path}/#{zap_web_hook_id}/"
     end
 
     def config

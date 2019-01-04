@@ -3,7 +3,7 @@ module ZapierRuby
     attr_accessor :base_uri, :web_hooks, :enable_logging, :logger
 
     def initialize
-      self.base_uri = "https://zapier.com/hooks/catch/"
+      self.base_uri = "https://zapier.com/hooks/"
       self.web_hooks = { example_webhook: "webhook_id" }
       self.enable_logging = true
       self.logger = Logger.new(STDOUT)
